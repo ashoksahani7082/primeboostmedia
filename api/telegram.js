@@ -11,8 +11,19 @@ module.exports=async(req,res)=>{
  const update=req.body||{},msg=update.business_message;
  if(!msg||!msg.business_connection_id||!msg.from||msg.from.is_bot)return res.status(200).json({ok:true,ignored:true});
  const body=typeof msg.text==="string"?msg.text:(typeof msg.caption==="string"?msg.caption:"");
- const start=body.indexOf("\\u2063"),end=body.indexOf("\\u2064",start+1);\n let ref="";\n if(start>=0&&end>start){const encoded=body.slice(start+1,end);const bits=Array.from(encoded).map(ch=>ch==="\\u200B"?"0":ch==="\\u200C"?"1":"").join("");if(bits&&bits.length%8===0){const bytes=[];for(let i=0;i<bits.length;i+=8)bytes.push(parseInt(bits.slice(i,i+8),2));try{ref=new TextDecoder().decode(new Uint8Array(bytes));}catch(e){ref="";}}}\n if(!/^[a-zA-Z0-9_-]{8,100}$/.test(ref))return res.status(200).json({ok:true,ignored:true,reason:"No valid hidden attribution reference"});
- if(!match)return res.status(200).json({ok:true,ignored:true,reason:"No ad attribution reference"});
+ const markerStart="\\u2063",markerEnd="\\u2064";
+ const startIndex=body.indexOf(markerStart),endIndex=body.indexOf(markerEnd,startIndex+markerStart.length);
+ let ref="";
+ if(startIndex>=0&&endIndex>startIndex){
+   const encoded=body.slice(startIndex+markerStart.length,endIndex);
+   const bits=Array.from(encoded).map(ch=>ch==="\\u200B"?"0":ch==="\\u200C"?"1":"").join("");
+   if(bits&&bits.length%8===0){
+     const bytes=[];
+     for(let i=0;i<bits.length;i+=8)bytes.push(parseInt(bits.slice(i,i+8),2));
+     try{ref=Buffer.from(bytes).toString("utf8");}catch(e){ref="";}
+   }
+ }
+ if(!/^[a-zA-Z0-9_-]{8,100}$/.test(ref))return res.status(200).json({ok:true,ignored:true,reason:"No valid hidden attribution reference"});
  const redisUrl=process.env.KV_REST_API_URL||process.env.UPSTASH_REDIS_REST_URL,redisToken=process.env.KV_REST_API_TOKEN||process.env.UPSTASH_REDIS_REST_TOKEN;
  const pixelId=process.env.META_PIXEL_ID,accessToken=process.env.META_CAPI_ACCESS_TOKEN;
  if(!redisUrl||!redisToken||!pixelId||!accessToken)return res.status(500).json({ok:false,error:"Missing Redis/Meta env"});

@@ -32,8 +32,15 @@ module.exports=async(req,res)=>{
   const key="pbm:adclick:"+ref,raw=await redis(["GET",key],redisUrl,redisToken);
   if(!raw)return res.status(200).json({ok:true,ignored:true,reason:"Attribution expired or not found"});
   const attribution=JSON.parse(raw);
-  // Remove before send to prevent duplicate messages from double-counting.
+  // Only count traffic carrying Meta click evidence (fbclid/fbc). Direct/organic is discarded.
+  const hasMetaClick=typeof attribution.fbclid==="string"&&attribution.fbclid.length>0
+    ||typeof attribution.fbc==="string"&&/^fb\\.1\\.\\d+\\.[^\\s]+$/.test(attribution.fbc);
+  // Consume attribution once, regardless of source, to prevent duplicate processing.
   await redis(["DEL",key],redisUrl,redisToken);
+  if(!hasMetaClick){
+    console.log("Telegram Subscribe ignored: no Meta ad click evidence",{ref,updateId:update.update_id,source:"DIRECT_OR_ORGANIC"});
+    return res.status(200).json({ok:true,ignored:true,reason:"No Meta ad click evidence",source:"DIRECT_OR_ORGANIC"});
+  }
   const userData={external_id:[crypto.createHash("sha256").update(String(msg.from.id)).digest("hex")]};
   if(attribution.fbp)userData.fbp=attribution.fbp;
   if(attribution.fbc)userData.fbc=attribution.fbc;

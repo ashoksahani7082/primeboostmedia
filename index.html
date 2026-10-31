@@ -9,7 +9,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{font-family:Inter,system-ui,sans-serif;margin:0;min-height:100vh;overflow:hidden;background:linear-gradient(135deg,#f8fdff 0%,#e6f6ff 48%,#d4efff 100%);color:#102b46}
+*{box-sizing:border-box}body{font-family:Inter,system-ui,sans-serif;margin:0;min-height:100vh;overflow-x:hidden;overflow-y:auto;background:linear-gradient(135deg,#f8fdff 0%,#e6f6ff 48%,#d4efff 100%);color:#102b46}
 .scene{position:fixed;inset:0;overflow:hidden;perspective:1000px;pointer-events:none}
 .glow{position:absolute;border-radius:50%;filter:blur(65px);opacity:.72;animation:drift 13s ease-in-out infinite alternate}
 .glow.one{width:360px;height:360px;left:-110px;top:-100px;background:#73d0ff}.glow.two{width:400px;height:400px;right:-120px;bottom:-150px;background:#b5e9ff;animation-delay:-5s}
@@ -23,6 +23,13 @@
 .pulse{animation:pulse 2.2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(53,174,229,.36)}70%{box-shadow:0 0 0 16px rgba(53,174,229,0)}100%{box-shadow:0 0 0 0 rgba(53,174,229,0)}}
 @media(max-height:720px){body{overflow:auto}.card{padding:1.5rem!important}.scene{position:fixed}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+#contactBtn,#messageBtn{display:flex!important;position:relative;z-index:10;width:100%;min-height:58px;align-items:center;justify-content:center;gap:12px;text-decoration:none!important;border-radius:18px!important;font-size:14px!important;font-weight:900!important;opacity:1!important;visibility:visible!important;}
+#contactBtn{color:#fff!important;background:linear-gradient(135deg,#087fce,#18c3e6)!important;border:1px solid #0c9edb!important;box-shadow:0 10px 26px rgba(0,145,210,.35)!important;}
+#messageBtn{margin-top:14px!important;color:#fff!important;background:linear-gradient(135deg,#6d28d9,#a855f7)!important;border:1px solid #8b43e7!important;box-shadow:0 10px 26px rgba(126,58,215,.30)!important;padding:15px 20px!important;}
+#contactBtn:hover,#messageBtn:hover{filter:brightness(1.08);transform:translateY(-2px);}
+.card{max-height:none!important;margin:18px auto!important;}
+@media(max-width:480px){.card{padding:24px 20px!important}h1{font-size:30px!important}}
 </style>
 </head>
 <body class="min-h-screen flex items-center justify-center px-4 py-6">

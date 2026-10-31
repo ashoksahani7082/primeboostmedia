@@ -11,12 +11,13 @@ module.exports=async(req,res)=>{
  const update=req.body||{},msg=update.business_message;
  if(!msg||!msg.business_connection_id||!msg.from||msg.from.is_bot)return res.status(200).json({ok:true,ignored:true});
  const body=typeof msg.text==="string"?msg.text:(typeof msg.caption==="string"?msg.caption:"");
- const markerStart="\\u2063",markerEnd="\\u2064";
+ const markerStart=String.fromCharCode(0x2063),markerEnd=String.fromCharCode(0x2064);
  const startIndex=body.indexOf(markerStart),endIndex=body.indexOf(markerEnd,startIndex+markerStart.length);
  let ref="";
  if(startIndex>=0&&endIndex>startIndex){
    const encoded=body.slice(startIndex+markerStart.length,endIndex);
-   const bits=Array.from(encoded).map(ch=>ch==="\\u200B"?"0":ch==="\\u200C"?"1":"").join("");
+   const zero=String.fromCharCode(0x200B),one=String.fromCharCode(0x200C);
+   const bits=Array.from(encoded).map(ch=>ch===zero?"0":ch===one?"1":"").join("");
    if(bits&&bits.length%8===0){
      const bytes=[];
      for(let i=0;i<bits.length;i+=8)bytes.push(parseInt(bits.slice(i,i+8),2));

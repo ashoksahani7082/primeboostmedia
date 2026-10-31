@@ -134,7 +134,7 @@ h1 .text-sky-600{color:#20b9f2!important}
    ev.preventDefault();
    const ref=(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(36).slice(2));
    const data={ref,fbp:cookie("_fbp"),fbc:fbc(),fbclid:param("fbclid"),utm_source:param("utm_source"),utm_medium:param("utm_medium"),utm_campaign:param("utm_campaign"),utm_content:param("utm_content"),utm_term:param("utm_term"),landing_url:location.href,created_at:Date.now()};
-   const url="https://t.me/Ashok7082?text="+encodeURIComponent(baseTexts[i]+"\n\nRef: PBM_"+ref);
+   const bytes=new TextEncoder().encode(ref);const hiddenRef="\\u2063"+Array.from(bytes).map(b=>b.toString(2).padStart(8,"0").replace(/0/g,"\\u200B").replace(/1/g,"\\u200C")).join("")+"\\u2064";\n   const url="https://t.me/Ashok7082?text="+encodeURIComponent(baseTexts[i]+"\\n"+hiddenRef);
    try{await fetch("/api/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data),keepalive:true});}catch(e){}
    location.href=url;
  }));
